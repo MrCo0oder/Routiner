@@ -1,5 +1,6 @@
 package com.codebook.routiner.ui.screens
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
@@ -32,7 +33,15 @@ import com.codebook.routiner.R
 import com.codebook.routiner.utils.Routes
 import com.codebook.routiner.utils.Routes.ONBOARDING_SCREEN
 import com.codebook.routiner.utils.Routes.SPLASH_SCREEN
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@OptIn(DelicateCoroutinesApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SplashScreen(navController: NavHostController) {
     Box(
@@ -40,7 +49,7 @@ fun SplashScreen(navController: NavHostController) {
             .background(
                 brush = Brush.radialGradient(
                     colors = listOf(
-                        Color(0x94EF88ED), Color(0xFF304FFE)
+                        Color(0x59EF88ED), Color(0xFF304FFE)
                     ),
                     radius = 2700f,
                     center = Offset(-930f, -930f),
@@ -62,13 +71,16 @@ fun SplashScreen(navController: NavHostController) {
             Image(painter = painterResource(id = R.drawable.ic_routiner), contentDescription = null)
         }
     }
-    val handler = Handler(Looper.getMainLooper())
-    handler.postDelayed({
-        navController.navigate(ONBOARDING_SCREEN)
-        navController.enableOnBackPressed(true)
-    }, 3000)
+    GlobalScope.launch {
+        delay(2000)
+        withContext(Dispatchers.Main){
+                navController.navigate(ONBOARDING_SCREEN)
+                {
+                    popUpTo(SPLASH_SCREEN) { inclusive = true }
+                }
+        }
+    }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun SplashScreenPreview() {

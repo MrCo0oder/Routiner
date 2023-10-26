@@ -68,5 +68,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("androidx.navigation:navigation-compose:2.7.4")
+    //viewpager
+    implementation ("androidx.compose.foundation:foundation:1.5.4")
 
 }

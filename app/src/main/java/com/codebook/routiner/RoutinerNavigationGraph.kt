@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.codebook.routiner.ui.screens.OnboardingScreen
 import com.codebook.routiner.ui.screens.SplashScreen
+import com.codebook.routiner.ui.screens.loginWithEmail.LoginWithEmailScreen
+import com.codebook.routiner.utils.Routes.Login_SCREEN
 import com.codebook.routiner.utils.Routes.ONBOARDING_SCREEN
 import com.codebook.routiner.utils.Routes.SPLASH_SCREEN
 
@@ -19,7 +21,11 @@ fun RoutinerNavigationGraph() {
         composable(ONBOARDING_SCREEN) {
             OnboardingScreen(navController)
         }
+        composable(Login_SCREEN) {
+            LoginWithEmailScreen(navController)
+        }
     }
+
 }
 
 
