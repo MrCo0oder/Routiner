@@ -3,6 +3,7 @@ package com.codebook.routiner.ui.screens.loginWithEmail
 import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.codebook.routiner.utils.Constants.PASSWORD_PATTERN
 import java.util.regex.Pattern
 
 class LoginWithEmailViewModel : ViewModel() {
@@ -21,7 +22,7 @@ class LoginWithEmailViewModel : ViewModel() {
 
     fun validateEmail(): String? {
         return if (uiState.value.email.isEmpty()) {
-            "Email can't be empty."
+            null
         } else if (!Pattern.matches(Patterns.EMAIL_ADDRESS.toString(), uiState.value.email)) {
             "Please enter a valid email."
         } else {
@@ -34,16 +35,19 @@ class LoginWithEmailViewModel : ViewModel() {
         uiState.value.email
     )
 
-    private fun isValidPassword() =
-        uiState.value.email.isNotEmpty() && uiState.value.password.length < 8
+    private fun isValidPassword(): Boolean {
+        val pattern = Pattern.compile(PASSWORD_PATTERN)
+        val matcher = pattern.matcher(uiState.value.password)
+        return matcher.matches()
+    }
 
     fun isValidScreen(): Boolean = isValidEmail() && isValidPassword()
 
     fun validatePassword(): String? {
         return if (uiState.value.password.isEmpty()) {
-            ("Password can't be empty.")
-        } else if (uiState.value.password.length < 8) {
-            ("Please enter a password at least 8 characters.")
+            null
+        } else if (!isValidPassword()) {
+            ("Please enter a valid password at least 8 characters.")
         } else {
             (null)
         }

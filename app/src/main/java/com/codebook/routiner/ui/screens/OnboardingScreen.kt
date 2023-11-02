@@ -1,6 +1,5 @@
 package com.codebook.routiner.ui.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +34,6 @@ import com.codebook.routiner.utils.Routes.Login_SCREEN
 
 @Composable
 fun OnboardingScreen(navController: NavHostController) {
-    BackHandler(enabled = false) {
-    }
     Surface {
         Box(
             modifier = Modifier

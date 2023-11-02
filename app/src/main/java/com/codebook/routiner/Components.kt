@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,17 +25,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -51,7 +49,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,8 +62,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.codebook.routiner.ui.screens.loginWithEmail.LoginStateUiEvents
-
 
 @Composable
 fun CircleComponent(padding: Dp, color: Color) {
@@ -117,12 +112,6 @@ fun OnBoardingComponent(image: Int, header: String, subHeading: String) {
             ), modifier = Modifier.fillMaxWidth()
         )
     }
-}
-
-@Preview(showBackground = true, backgroundColor = 0x00000)
-@Composable
-fun OnBoardingComponentPreview() {
-    HorizontalPagerScreen()
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -224,28 +213,19 @@ fun WhiteButtonWithIcon(modifier: Modifier, text: String, icon: Int, onClick: ()
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0x000000)
-@Composable
-private fun WhiteButtonWithIconPreview() {
-    WhiteButtonWithIcon(Modifier.fillMaxWidth(), "Facebook", R.drawable.facebook_logo) {
-
-    }
-}
 
 @Composable
 fun ToolbarWithBackButton(text: String, onClick: () -> Unit) {
     Row(
         Modifier
             .background(Color.White)
-            .padding(bottom = 16.dp, top = 12.dp, start = 10.dp, end = 10.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(bottom = 16.dp, top = 46.dp, start = 10.dp, end = 10.dp)
+            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
 
         IconButton(
             onClick = { onClick() },
-//            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black),
             modifier = Modifier
                 .padding(start = 15.dp)
                 .size(48.dp)
@@ -270,14 +250,6 @@ fun ToolbarWithBackButton(text: String, onClick: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0x0000000)
-@Composable
-fun ToolbarWithBackButtonPreview() {
-    ToolbarWithBackButton("Continue with E-mail") {
-
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldComponent(
@@ -293,7 +265,8 @@ fun TextFieldComponent(
     var value by remember {
         mutableStateOf(default)
     }
-    val showPassword = remember { mutableStateOf(false) }
+    val showPassword = remember { mutableStateOf(true) }
+    val showIcon = remember { mutableStateOf(false) }
     val localFocusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
@@ -304,7 +277,7 @@ fun TextFieldComponent(
             text = label,
             color = labelColor,
             fontSize = labelSize,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(10.dp))
         TextField(
@@ -317,33 +290,42 @@ fun TextFieldComponent(
             ),
             isError = !error.isNullOrEmpty(),
             visualTransformation = if (isPassword && showPassword.value) PasswordVisualTransformation() else VisualTransformation.None,
-            trailingIcon = if (isPassword) {
-                {
-                    val (icon, iconColor) = if (showPassword.value) {
-                        Pair(
-                            Icons.Default.Done,
-                            colorResource(id = R.color.purple_200)
-                        )
+            trailingIcon =
+            {
+                if (showIcon.value) {
+                    if (isPassword) {
+                        val icon = if (showPassword.value) R.drawable.show else R.drawable.hide
+                        IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = "Visibility",
+                            )
+                        }
                     } else {
-                        Pair(
-                            Icons.Default.Clear,
-                            colorResource(id = R.color.purple_500)
-                        )
-                    }
-
-                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
-                        Icon(
-                            icon,
-                            contentDescription = "Visibility",
-                            tint = iconColor
-                        )
+                        IconButton(
+                            onClick = {
+                                value = ""
+                                onValueChange("")
+                                showIcon.value = false
+                            },
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(30.dp),
+                                painter = painterResource(id = R.drawable.close),
+                                contentDescription = null,
+                            )
+                        }
                     }
                 }
-            } else null,
+            },
             supportingText = {
                 if (!error.isNullOrEmpty())
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Info, contentDescription = null)
+                        Icon(
+                            Icons.Default.Info,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(text = error, color = MaterialTheme.colorScheme.error)
                     }
@@ -351,6 +333,8 @@ fun TextFieldComponent(
             onValueChange = {
                 value = it.trim()
                 onValueChange(it.trim())
+                if (it.isNotEmpty())
+                    showIcon.value = true
             },
             placeholder = {
                 Text(text = placeholder, fontSize = 18.sp)
@@ -359,6 +343,8 @@ fun TextFieldComponent(
             singleLine = true,
             keyboardActions = KeyboardActions {
                 localFocusManager.clearFocus()
+                if (!isPassword)
+                    showIcon.value = false
             },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
@@ -368,8 +354,178 @@ fun TextFieldComponent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectableCard(
+    modifier: Modifier,
+    emoji: String,
+    id: Int,
+    isSelected: Boolean,
+    color: Color = Color.White,
+    label: String = "Male",
+    onClick: (Int, Boolean) -> Unit
+) {
+    var selected = isSelected
+    Card(
+        onClick = {
+            if (selected) onClick(-1, true) else onClick(id, false)
+            selected = !selected
+        },
+        colors = CardDefaults.cardColors(color, contentColor = MaterialTheme.colorScheme.tertiary),
+        modifier = modifier
+            .padding(16.dp)
+            .height(134.dp),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .border(
+                    width = 1.dp,
+                    shape = RoundedCornerShape(9),
+                    color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.weight(0.8f))
+                Text(
+                    text = emoji,
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        lineHeight = 48.sp,
+                        fontWeight = FontWeight.W700,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = label,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.weight(0.8f))
+            }
+        }
+
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiSelectCard(
+    modifier: Modifier,
+    emoji: String,
+    id: Int,
+    isSelected: Boolean,
+    color: Color = Color.White,
+    label: String = "Male",
+    onClick: (Int, Boolean) -> Unit
+) {
+    val selected = remember {
+        mutableStateOf(isSelected)
+    }
+    Card(
+        onClick = {
+            selected.value = !selected.value
+            onClick(id, selected.value)
+        },
+        colors = CardDefaults.cardColors(color, contentColor = MaterialTheme.colorScheme.tertiary),
+        modifier = modifier
+            .padding(16.dp)
+            .height(134.dp),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .border(
+                    width = 1.dp,
+                    shape = RoundedCornerShape(9),
+                    color = if (selected.value) MaterialTheme.colorScheme.primary else Color.Transparent
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.weight(0.8f))
+                Text(
+                    text = emoji,
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        lineHeight = 48.sp,
+                        fontWeight = FontWeight.W700,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = label,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.weight(0.8f))
+            }
+        }
+
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-private fun TextFieldComponentPreview() {
-    TextFieldComponent("Name", "", 18.sp, default = "", error = "sadad") {}
+private fun SelectableCardPreview() {
+    Column {
+//        SelectableCard(Modifier.weight(1f), emoji = "\uD83E\uDD37\uD83C\uDFFB\u200D️", 0, true) {
+//
+//        }
+//        SelectableCard(Modifier.weight(1f), emoji = "\uD83D\uDE4B\uD83C\uDFFB\u200D♀️", 1, false) {
+//        }
+    }
+}
+
+@Composable
+fun BlueButton(text: String = "Next", isEnabled: Boolean, onClick: () -> Unit) {
+    Button(
+        enabled = isEnabled,
+        onClick = { onClick() },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            Color(0xFF3843FF),
+            disabledContainerColor = MaterialTheme.colorScheme.tertiary
+        )
+    ) {
+        Text(
+            text = text, Modifier.padding(16.dp), style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.W500,
+                color = Color(0xFFFFFFFF),
+                textAlign = TextAlign.Center,
+            )
+        )
+    }
+}
+@Preview(showBackground = true)
+@Composable
+private fun BlueButtonPreview() {
+    BlueButton(isEnabled = true) {
+
+    }
 }
