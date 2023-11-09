@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +29,6 @@ import com.codebook.routiner.BlueButton
 import com.codebook.routiner.SelectableCard
 import com.codebook.routiner.ToolbarWithBackButton
 import com.codebook.routiner.model.CreateAccountStateUiEvents
-import com.codebook.routiner.utils.Routes
 import com.codebook.routiner.utils.Routes.HABITS_SCREEN
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,24 +36,25 @@ import com.codebook.routiner.utils.Routes.HABITS_SCREEN
 @Composable
 fun GenderScreen(
     navController: NavHostController,
-    viewModel: CreateAccountViewModel
+    viewModel: CreateAccountViewModel,
+    goNext: () -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
 
     Scaffold(
         Modifier.background(Color(0xFFF8F7F7)),
         topBar = {
-            ToolbarWithBackButton(text = "Create Account") {
+            ToolbarWithBackButton(text = "Create Account ", label = "- Gender") {
                 navController.popBackStack()
             }
         },
         content = {
             Column(
                 Modifier
-                    .fillMaxSize()
                     .padding(it)
                     .background(Color(0xFFF8F7F7))
-                    .padding(horizontal = 16.dp)
+                    .padding(start = 16.dp, end = 16.dp)
+                    .fillMaxSize()
             ) {
                 Text(
                     text = "Choose your gender",
@@ -71,12 +69,12 @@ fun GenderScreen(
                 )
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SelectableCard(
                         Modifier.weight(1f),
-                        "\uD83E\uDD37\uD83C\uDFFB\u200D️",
+                        "🧔🏻‍♂️",
                         0,
                         uiState.value.gender == 0, label = "Male"
                     ) { id, _ ->
@@ -84,7 +82,7 @@ fun GenderScreen(
                     }
                     SelectableCard(
                         Modifier.weight(1f),
-                        "\uD83D\uDE4B\uD83C\uDFFB\u200D♀️",
+                        "👱🏻‍♀️",
                         1,
                         uiState.value.gender == 1, label = "Female"
                     ) { id, _ ->
@@ -92,10 +90,10 @@ fun GenderScreen(
                     }
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                BlueButton(isEnabled =viewModel.isGenderScreenValid()) {
-                    navController.navigate(Routes.HABITS_SCREEN)
+                BlueButton(isEnabled = viewModel.isGenderScreenValid()) {
+                    goNext()
                 }
-                Spacer(modifier = Modifier.weight(0.1f))
+                Spacer(modifier = Modifier.height(20.dp))
             }
         },
     )
@@ -104,5 +102,5 @@ fun GenderScreen(
 @Preview(showBackground = true)
 @Composable
 private fun BasicInfoScreenPreview() {
-    GenderScreen(rememberNavController(), viewModel = CreateAccountViewModel())
+    GenderScreen(rememberNavController(), viewModel = CreateAccountViewModel()){}
 }

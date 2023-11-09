@@ -8,6 +8,6 @@ data class CreateAccountState(
     var password: String = "",
     var name: String = "",
     var surName: String = "",
-    var gender: Int = -1,
+    var gender: Int = 0,
     var habitsList: MutableList<Int> = mutableListOf()
 )

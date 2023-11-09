@@ -1,7 +1,6 @@
 package com.codebook.routiner.ui.screens.loginWithEmail
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,16 +32,23 @@ import androidx.navigation.compose.rememberNavController
 import com.codebook.routiner.BlueButton
 import com.codebook.routiner.TextFieldComponent
 import com.codebook.routiner.ToolbarWithBackButton
+import com.codebook.routiner.utils.Constants
+import com.codebook.routiner.utils.Constants.USER_MAIL
+import com.codebook.routiner.utils.Constants.USER_NAME
+import com.codebook.routiner.utils.Routes
 import com.codebook.routiner.utils.Routes.BASIC_INFO_SCREEN
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginWithEmailScreen(navController: NavHostController = rememberNavController()) {
+fun LoginWithEmailScreen(
+    navController: NavHostController = rememberNavController(),
+    userData: (Pair<String, String>) -> Unit
+) {
     val viewModel = LoginWithEmailViewModel()
     Scaffold(
         topBar = {
-            ToolbarWithBackButton(text = "Continue with E-mail",) {
+            ToolbarWithBackButton(text = "Continue with E-mail") {
                 navController.popBackStack()
             }
         },
@@ -52,7 +58,8 @@ fun LoginWithEmailScreen(navController: NavHostController = rememberNavControlle
                     .background(Color(0xFFF8F7F7))
                     .padding(horizontal = 16.dp)
                     .padding(it)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
             ) {
                 TextFieldComponent(
                     "E-mail",
@@ -99,7 +106,9 @@ fun LoginWithEmailScreen(navController: NavHostController = rememberNavControlle
                             textAlign = TextAlign.Center,
                         )
                     )
-                    TextButton(onClick = { navController.navigate(BASIC_INFO_SCREEN) }) {
+                    TextButton(onClick = {
+                            userData(Pair(USER_NAME, USER_MAIL))
+                    }) {
                         Text(
                             text = "Let’s create!",
                             style = TextStyle(
@@ -112,10 +121,10 @@ fun LoginWithEmailScreen(navController: NavHostController = rememberNavControlle
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
-                BlueButton( isEnabled = viewModel.isValidScreen()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                BlueButton(isEnabled = viewModel.isValidScreen()) {
                 }
-                Spacer(modifier = Modifier.weight(0.3f))
+                Spacer(modifier = Modifier.height(20.dp))
             }
 
         }
@@ -125,5 +134,5 @@ fun LoginWithEmailScreen(navController: NavHostController = rememberNavControlle
 @Preview(showBackground = true)
 @Composable
 private fun LoginWithEmailScreenPreview() {
-    LoginWithEmailScreen()
+    LoginWithEmailScreen() {}
 }

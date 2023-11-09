@@ -9,4 +9,7 @@ object Constants {
             "(?=\\S+$)" +           // no white spaces
             ".{8,}" +               // at least 4 characters
             "$"
+    const val USER_NAME = "USER_NAME"
+    const val USER_MAIL = "USER_MAIL"
+
 }

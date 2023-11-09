@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "579986047808",
+    "project_id": "routiner-b03fa",
+    "storage_bucket": "routiner-b03fa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579986047808:android:ae2894a504489efecab0a5",
+        "android_client_info": {
+          "package_name": "com.codebook.routiner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579986047808-635unao3qtss96iok1nlmv5niktsd6ph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codebook.routiner",
+            "certificate_hash": "6c9e0c9fb452f2a734970c0d2edfd7bbc07e1e65"
+          }
+        },
+        {
+          "client_id": "579986047808-vm4sm1rcvbsn6q0js476fd8ntaddls7p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSUM6gWrGcdqQhd-4HhDX7A_nWBSZd3CQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579986047808-vm4sm1rcvbsn6q0js476fd8ntaddls7p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

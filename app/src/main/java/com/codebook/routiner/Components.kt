@@ -1,5 +1,6 @@
 package com.codebook.routiner
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +39,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +51,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -77,14 +83,18 @@ fun CircleComponent(padding: Dp, color: Color) {
 }
 
 @Composable
-fun OnBoardingComponent(image: Int, header: String, subHeading: String) {
+fun OnBoardingComponent(
+    modifier: Modifier = Modifier,
+    image: Int,
+    header: String,
+    subHeading: String
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+        verticalArrangement = Arrangement.Top,
+        modifier = modifier
             .background(Color.Transparent)
-            .padding(20.dp)
-            .height(500.dp)
+            .padding(vertical = 20.dp)
     ) {
         Image(
             painter = painterResource(image),
@@ -92,15 +102,20 @@ fun OnBoardingComponent(image: Int, header: String, subHeading: String) {
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .height(300.dp)
         )
         Text(
-            text = header, style = TextStyle(
+            text = header,
+            style = TextStyle(
                 fontSize = 40.sp,
                 lineHeight = 48.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFFFFFFF),
-            ), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            textAlign = TextAlign.Start
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
@@ -109,25 +124,27 @@ fun OnBoardingComponent(image: Int, header: String, subHeading: String) {
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.Light,
                 color = Color(0xFFD7D9FF),
-            ), modifier = Modifier.fillMaxWidth()
+            ), modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPagerScreen() {
+fun HorizontalPagerScreen(modifier: Modifier) {
     val pageCount = 3
     val pagerState = rememberPagerState(
-        initialPage = 0,
+        initialPage = 0
     ) {
         pageCount
     }
-    Column {
+    Column(modifier) {
         HorizontalPager(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .weight(1f),
             state = pagerState,
             userScrollEnabled = true,
         ) { current ->
@@ -167,7 +184,7 @@ fun Indicator(pagerState: PagerState) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 20.dp),
+            .padding(vertical = 20.dp, horizontal = 16.dp),
     ) {
         repeat(pagerState.pageCount) { iteration ->
             val color =
@@ -197,7 +214,7 @@ fun WhiteButtonWithIcon(modifier: Modifier, text: String, icon: Int, onClick: ()
             Image(
                 painter = painterResource(id = icon),
                 contentDescription = null,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(25.dp),
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
@@ -214,38 +231,61 @@ fun WhiteButtonWithIcon(modifier: Modifier, text: String, icon: Int, onClick: ()
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolbarWithBackButton(text: String, onClick: () -> Unit) {
-    Row(
-        Modifier
-            .background(Color.White)
-            .padding(bottom = 16.dp, top = 46.dp, start = 10.dp, end = 10.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
-    ) {
+fun ToolbarWithBackButton(
+    text: String,
+    label: String = "",
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        rememberTopAppBarState()
+    ),
+    onClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = text, style = TextStyle(
+                        fontSize = 24.sp,
+                        lineHeight = 32.sp,
+                        fontWeight = FontWeight(700),
+                        color = Color(0xFF040415),
+                    )
+                )
+                Text(
+                    text = label, style = TextStyle(
+                        fontSize = 24.sp,
+                        lineHeight = 32.sp,
+                        fontWeight = FontWeight.Light,
+                        color = Color(0xFF040415),
+                    )
+                )
+            }
+        }, navigationIcon = {
+            IconButton(
+                onClick = { onClick() },
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .size(48.dp)
+                    .aspectRatio(1f)
+                    .border(0.5.dp, Color.LightGray, RoundedCornerShape(16.dp))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = null
+                )
+            }
+        }, scrollBehavior = scrollBehavior
+    )
+}
 
-        IconButton(
-            onClick = { onClick() },
-            modifier = Modifier
-                .padding(start = 15.dp)
-                .size(48.dp)
-                .aspectRatio(1f)
-                .border(0.5.dp, Color.LightGray, RoundedCornerShape(16.dp))
-        ) {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = null
-            )
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        Text(
-            text = text, style = TextStyle(
-                fontSize = 24.sp,
-                lineHeight = 32.sp,
-                fontWeight = FontWeight(700),
-                color = Color(0xFF040415),
-            )
-        )
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    ToolbarWithBackButton(text = "Create an account") {
 
     }
 }
@@ -260,6 +300,10 @@ fun TextFieldComponent(
     default: String,
     error: String?,
     isPassword: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        imeAction = ImeAction.Next,
+        keyboardType = KeyboardType.Text
+    ),
     onValueChange: (String) -> Unit
 ) {
     var value by remember {
@@ -268,6 +312,7 @@ fun TextFieldComponent(
     val showPassword = remember { mutableStateOf(true) }
     val showIcon = remember { mutableStateOf(false) }
     val localFocusManager = LocalFocusManager.current
+    onValueChange(value)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -292,31 +337,30 @@ fun TextFieldComponent(
             visualTransformation = if (isPassword && showPassword.value) PasswordVisualTransformation() else VisualTransformation.None,
             trailingIcon =
             {
-                if (showIcon.value) {
-                    if (isPassword) {
-                        val icon = if (showPassword.value) R.drawable.show else R.drawable.hide
-                        IconButton(onClick = { showPassword.value = !showPassword.value }) {
-                            Icon(
-                                painter = painterResource(id = icon),
-                                contentDescription = "Visibility",
-                            )
-                        }
-                    } else {
-                        IconButton(
-                            onClick = {
-                                value = ""
-                                onValueChange("")
-                                showIcon.value = false
-                            },
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(30.dp),
-                                painter = painterResource(id = R.drawable.close),
-                                contentDescription = null,
-                            )
-                        }
+                if (isPassword) {
+                    val icon = if (showPassword.value) R.drawable.show else R.drawable.hide
+                    IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                        Icon(
+                            painter = painterResource(id = icon),
+                            contentDescription = "Visibility",
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = {
+                            value = ""
+                            onValueChange("")
+                            showIcon.value = false
+                        },
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            painter = painterResource(id = R.drawable.close),
+                            contentDescription = null,
+                        )
                     }
                 }
+
             },
             supportingText = {
                 if (!error.isNullOrEmpty())
@@ -342,14 +386,21 @@ fun TextFieldComponent(
             textStyle = TextStyle.Default.copy(fontSize = 24.sp, color = Color(0xFF000000)),
             singleLine = true,
             keyboardActions = KeyboardActions {
-                localFocusManager.clearFocus()
-                if (!isPassword)
+                if (!isPassword) {
                     showIcon.value = false
+                    localFocusManager.moveFocus(FocusDirection.Down)
+                } else {
+                    localFocusManager.clearFocus()
+                }
             },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Text
-            ),
+
+            keyboardOptions = if (isPassword) {
+                KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password
+                )
+            } else
+                keyboardOptions,
         )
     }
 }
@@ -374,17 +425,17 @@ fun SelectableCard(
         colors = CardDefaults.cardColors(color, contentColor = MaterialTheme.colorScheme.tertiary),
         modifier = modifier
             .padding(16.dp)
-            .height(134.dp),
+            .aspectRatio(1f),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
                 .border(
                     width = 1.dp,
-                    shape = RoundedCornerShape(9),
+                    shape = RoundedCornerShape(12.dp),
                     color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
-                ),
+                )
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -442,7 +493,7 @@ fun MultiSelectCard(
         colors = CardDefaults.cardColors(color, contentColor = MaterialTheme.colorScheme.tertiary),
         modifier = modifier
             .padding(16.dp)
-            .height(134.dp),
+            .aspectRatio(1f),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Box(
@@ -491,21 +542,20 @@ fun MultiSelectCard(
 @Preview(showBackground = true)
 @Composable
 private fun SelectableCardPreview() {
-    Column {
-//        SelectableCard(Modifier.weight(1f), emoji = "\uD83E\uDD37\uD83C\uDFFB\u200D️", 0, true) {
-//
-//        }
-//        SelectableCard(Modifier.weight(1f), emoji = "\uD83D\uDE4B\uD83C\uDFFB\u200D♀️", 1, false) {
-//        }
-    }
+
 }
 
 @Composable
-fun BlueButton(text: String = "Next", isEnabled: Boolean, onClick: () -> Unit) {
+fun BlueButton(
+    text: String = "Next",
+    isEnabled: Boolean,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Button(
         enabled = isEnabled,
         onClick = { onClick() },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             Color(0xFF3843FF),
             disabledContainerColor = MaterialTheme.colorScheme.tertiary
@@ -522,6 +572,7 @@ fun BlueButton(text: String = "Next", isEnabled: Boolean, onClick: () -> Unit) {
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun BlueButtonPreview() {

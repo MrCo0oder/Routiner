@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Routiner</string>
+<!--    <string name="gcp_id">579986047808-635unao3qtss96iok1nlmv5niktsd6ph.apps.googleusercontent.com</string>-->
+    <string name="gcp_id">579986047808-vm4sm1rcvbsn6q0js476fd8ntaddls7p.apps.googleusercontent.com</string>
 </resources>
